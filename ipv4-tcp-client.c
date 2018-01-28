@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     char buffer[1024];
 
     // Create UDP socket
-    if ((client_socket = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
+    if ((client_socket = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Creating socket");
         exit(1);
     }
@@ -25,8 +25,17 @@ int main(int argc, char **argv) {
     server_address.sin_port = htons(SERVER_PORT);
     server_address.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
 
+    // Begin hand-shaking
+    if (connect(client_socket, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+        perror("'connect' failed");
+        exit(4);
+    }
+
     strncpy(buffer, "Hello!\0", 1024);
-    if (sendto(client_socket, buffer, strlen(buffer) + 1, 0, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+    if (send(client_socket, buffer, strlen(buffer) + 1, 0) < 0) {
+        // send(client_socket, buffer, strlen(buffer) + 1, 0) は
+        // sendto(client_socket, buffer, strlen(buffer) + 1, 0, NULL, 0) と同じ
+        // write(client_socket, buffer, strlen(buffer) + 1) もほぼ同じ
         perror("'sendto' failed");
         exit(4);
     }

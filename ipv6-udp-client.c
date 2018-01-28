@@ -13,8 +13,8 @@
 
 int main(int argc, char **argv) {
     int client_socket;
-    char buffer[1024];
     struct sockaddr_in6 server_address;
+    char buffer[1024];
 
     // Create UDP socket
     if ((client_socket = socket(PF_INET6, SOCK_DGRAM, 0)) < 0) {
@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
 
     strncpy(buffer, "Hello!", 1024);
-    if (sendto(client_socket, buffer, sizeof(buffer), 0, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+    if (sendto(client_socket, buffer, strlen(buffer) + 1, 0, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
         perror("'sendto' failed");
         exit(4);
     }
