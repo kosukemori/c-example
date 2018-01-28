@@ -1,17 +1,12 @@
 CC=gcc
+TARGETS=ipv4-udp-client ipv6-udp-server ipv6-udp-client
 
-all: ipv6-udp-server.out ipv6-udp-client.out start
+all: $(TARGETS)
 
-start:
-	./ipv6-udp-server.out
+$(TARGETS):
+	$(CC) -o $@.out $@.c
 
-ipv6-udp-server.out: FORCE
-	$(CC) -w -o ipv6-udp-server.out ipv6-udp-server.c
-
-ipv6-udp-client.out: FORCE
-	$(CC) -o ipv6-udp-client.out ipv6-udp-client.c
+clean: FORCE
+	rm -f *.out
 
 FORCE:
-
-clean:
-	rm -f *.out
