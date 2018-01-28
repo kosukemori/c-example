@@ -25,8 +25,8 @@ int main(int argc, char **argv) {
     server_address.sin_port = htons(SERVER_PORT);
     server_address.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
 
-    strncpy(buffer, "Hello!", 1024);
-    if (sendto(client_socket, buffer, 1024, 0, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+    strncpy(buffer, "Hello!\0", 1024);
+    if (sendto(client_socket, buffer, sizeof(buffer), 0, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
         perror("'sendto' failed");
         exit(4);
     }
