@@ -10,49 +10,49 @@
 #define SERVER_PORT 33333
 
 int main(int argc, char **argv) {
-    // 複数のクライアントと同時接続するときはnew_server_socket, client_address, client_address_lengthクライアントの数だけ必要
-    int server_socket, new_server_socket;
-    struct sockaddr_in server_address, client_address;
+    // 複数のクライアントと同時接続するときはthe_new_socket, client_info, client_info_lengthはクライアントの数だけ必要
+    int the_socket, the_new_socket;
+    struct sockaddr_in server_info, client_info;
     int sockopt_enable = 1;
-    socklen_t client_address_length;
+    socklen_t client_info_length;
     char buffer[1024];
     ssize_t recv_size;
     int total_recv_size;
 
     // Create TCP socket
-    if ((server_socket = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
-        perror("Creating socket");
+    if ((the_socket = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("'socket' failed");
         exit(1);
     }
 
     // Configure server's address and ports
-    memset(&server_address, 0, sizeof(server_address));
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(SERVER_PORT);
-    server_address.sin_addr.s_addr = htonl(INADDR_ANY);
+    memset(&server_info, 0, sizeof(server_info));
+    server_info.sin_family = AF_INET;
+    server_info.sin_port = htons(SERVER_PORT);
+    server_info.sin_addr.s_addr = htonl(INADDR_ANY);
 
     // Avoid 'Address already in use'
-    if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &sockopt_enable, sizeof(int)) < 0) {
+    if (setsockopt(the_socket, SOL_SOCKET, SO_REUSEADDR, &sockopt_enable, sizeof(int)) < 0) {
         perror("'setsockopt' failed");
         exit(1);
     }
 
-    if (bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+    if (bind(the_socket, (struct sockaddr *)&server_info, sizeof(server_info)) < 0) {
         perror("'bind' failed");
         exit(1);
     }
 
     // Create  the queue of pending connections
-    if (listen(server_socket, 10) < 0) { // 第2引数は接続要求をストックできるキューの数
+    if (listen(the_socket, 10) < 0) { // 第2引数は接続要求をストックできるキューの数
         perror("'listen' failed");
         exit(1);
     }
 
     //// 複数クライアントと同時接続する場合は、この先をforkなり別スレッド化なりする必要がある
-    client_address_length = sizeof(client_address); // FIXME: この行必要? acceptで上書きされそうなもんだけど……
+    client_info_length = sizeof(client_info); // FIXME: この行必要? acceptで上書きされそうなもんだけど……
 
     // Begin hand-shaking
-    if ((new_server_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_length)) < 0) {
+    if ((the_new_socket = accept(the_socket, (struct sockaddr *)&client_info, &client_info_length)) < 0) {
         perror("'accept' failed");
         exit(1);
     }
@@ -60,10 +60,10 @@ int main(int argc, char **argv) {
     total_recv_size = 0;
     while (1) {
         buffer[0] = '\0';
-        if ((recv_size = recv(new_server_socket, buffer, sizeof(buffer), 0)) < 0) {
-            // recv(new_server_socket, buffer, sizeof(buffer), 0) は
-            // recvfrom(new_server_socket, buffer, sizeof(buffer), 0, NULL, 0) と同じ
-            // read(new_server_socket, buffer, sizeof(buffer))もほぼ同じ
+        if ((recv_size = recv(the_new_socket, buffer, sizeof(buffer), 0)) < 0) {
+            // recv(the_new_socket, buffer, sizeof(buffer), 0) は
+            // recvfrom(the_new_socket, buffer, sizeof(buffer), 0, NULL, 0) と同じ
+            // read(the_new_socket, buffer, sizeof(buffer))もほぼ同じ
             perror("'recv failed");
             exit(4);
         }
@@ -82,9 +82,9 @@ int main(int argc, char **argv) {
         // それをrecv側で読んでデータの区切れ目を自分で見つける必要がある
     }
 
-    close(new_server_socket);
+    close(the_new_socket);
     //// 複数クライアントとの通信する場合、forkや別スレッド化などする必要があるのはここまで。
 
-    close(server_socket);
+    close(the_socket);
     return 0;
 }

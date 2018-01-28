@@ -10,36 +10,36 @@
 #define SERVER_PORT 33333
 
 int main(int argc, char **argv) {
-    int server_socket;
-    struct sockaddr_in6 server_address, client_address;
-    socklen_t client_address_length;
+    int the_socket;
+    struct sockaddr_in6 server_info, client_info;
+    socklen_t client_info_length;
     char buffer[1024];
 
     // Create UDP socket
-    if ((server_socket = socket(PF_INET6, SOCK_DGRAM, 0)) < 0) {
-        perror("Creating socket");
+    if ((the_socket = socket(PF_INET6, SOCK_DGRAM, 0)) < 0) {
+        perror("'socket' failed");
         exit(1);
     }
 
     // Configure server's address and ports
-    memset(&server_address, 0, sizeof(server_address));
-    server_address.sin6_family = AF_INET6;
-    server_address.sin6_port = htons(SERVER_PORT);
-    server_address.sin6_addr = in6addr_any;
+    memset(&server_info, 0, sizeof(server_info));
+    server_info.sin6_family = AF_INET6;
+    server_info.sin6_port = htons(SERVER_PORT);
+    server_info.sin6_addr = in6addr_any;
 
-    if (bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+    if (bind(the_socket, (struct sockaddr *)&server_info, sizeof(server_info)) < 0) {
         perror("'bind' failed");
         exit(1);
     }
 
-    client_address_length = sizeof(client_address); // FIXME: この行必要? recvfromで上書きされそうなもんだけど……
+    client_info_length = sizeof(client_info); // FIXME: この行必要? recvfromで上書きされそうなもんだけど……
     buffer[0] = '\0';
-    if (recvfrom(server_socket, buffer, sizeof(buffer), 0, (struct sockaddr *)&client_address, &client_address_length) < 0) {
+    if (recvfrom(the_socket, buffer, sizeof(buffer), 0, (struct sockaddr *)&client_info, &client_info_length) < 0) {
         perror("'recvfrom' failed");
         exit(4);
     }
     printf("%s\n", buffer);
 
-    close(server_socket);
+    close(the_socket);
     return 0;
 }
