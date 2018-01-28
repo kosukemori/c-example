@@ -1,4 +1,4 @@
-// Example of IPv4 TCP Server
+// Example of IPv6 TCP Server
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
