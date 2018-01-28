@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
         perror("'sendto' failed");
         exit(4);
     }
+    // FIXME: 本当は定期的にデータの送受信がないと切断と判断する仕様にするなど、TCPの仕組みに頼らない形で切断検知をしないといけない
 
     close(the_socket);
     return 0;
