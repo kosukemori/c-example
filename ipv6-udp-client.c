@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <unistd.h>
 
 #define SERVER_ADDRESS "::1"
 #define SERVER_PORT 33333
@@ -33,5 +34,7 @@ int main(int argc, char **argv) {
         perror("'sendto' failed");
         exit(4);
     }
+
+    close(client_socket);
     return 0;
 }
