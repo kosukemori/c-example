@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     server_info.sin6_port = htons(SERVER_PORT);
     inet_pton(AF_INET6, SERVER_ADDRESS, &server_info.sin6_addr);
 
-    strncpy(buffer, "Hello!", 1024);
+    strncpy(buffer, "Hello!\0", 1024);
     if (sendto(the_socket, buffer, strlen(buffer) + 1, 0, (struct sockaddr *)&server_info, sizeof(server_info)) < 0) {
         perror("'sendto' failed");
         exit(4);
