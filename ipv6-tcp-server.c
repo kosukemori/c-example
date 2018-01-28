@@ -6,13 +6,13 @@
 #include <string.h>
 #include <unistd.h>
 
-#define SERVER_ADDRESS "127.0.0.1"
+#define SERVER_ADDRESS "::1"
 #define SERVER_PORT 33333
 
 int main(int argc, char **argv) {
     // 複数のクライアントと同時接続するときはnew_server_socket, client_address, client_address_lengthクライアントの数だけ必要
     int server_socket, new_server_socket;
-    struct sockaddr_in server_address, client_address;
+    struct sockaddr_in6 server_address, client_address;
     int sockopt_enable = 1;
     socklen_t client_address_length;
     char buffer[1024];
@@ -20,16 +20,16 @@ int main(int argc, char **argv) {
     int total_recv_size;
 
     // Create TCP socket
-    if ((server_socket = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((server_socket = socket(PF_INET6, SOCK_STREAM, 0)) < 0) {
         perror("Creating socket");
         exit(1);
     }
 
     // Configure server's address and ports
     memset(&server_address, 0, sizeof(server_address));
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(SERVER_PORT);
-    server_address.sin_addr.s_addr = htonl(INADDR_ANY);
+    server_address.sin6_family = AF_INET6;
+    server_address.sin6_port = htons(SERVER_PORT);
+    server_address.sin6_addr = in6addr_any;
 
     // Avoid 'Address already in use'
     if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &sockopt_enable, sizeof(int)) < 0) {

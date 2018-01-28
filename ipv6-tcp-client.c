@@ -1,4 +1,4 @@
-// Example of IPv6 UDP Client
+// Example of IPv4 TCP Client
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -14,8 +14,8 @@ int main(int argc, char **argv) {
     struct sockaddr_in6 server_address;
     char buffer[1024];
 
-    // Create UDP socket
-    if ((client_socket = socket(PF_INET6, SOCK_DGRAM, 0)) < 0) {
+    // Create TCP socket
+    if ((client_socket = socket(PF_INET6, SOCK_STREAM, 0)) < 0) {
         perror("Creating socket");
         exit(1);
     }
@@ -26,8 +26,17 @@ int main(int argc, char **argv) {
     server_address.sin6_port = htons(SERVER_PORT);
     inet_pton(AF_INET6, SERVER_ADDRESS, &server_address.sin6_addr);
 
-    strncpy(buffer, "Hello!", 1024);
-    if (sendto(client_socket, buffer, strlen(buffer) + 1, 0, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+    // Begin hand-shaking
+    if (connect(client_socket, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
+        perror("'connect' failed");
+        exit(4);
+    }
+
+    strncpy(buffer, "Hello!\0", 1024);
+    if (send(client_socket, buffer, strlen(buffer) + 1, 0) < 0) {
+        // send(client_socket, buffer, strlen(buffer) + 1, 0) は
+        // sendto(client_socket, buffer, strlen(buffer) + 1, 0, NULL, 0) と同じ
+        // write(client_socket, buffer, strlen(buffer) + 1) もほぼ同じ
         perror("'sendto' failed");
         exit(4);
     }

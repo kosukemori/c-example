@@ -1,3 +1,4 @@
+// Example of IPv4 TCP Client
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -13,7 +14,7 @@ int main(int argc, char **argv) {
     struct sockaddr_in server_address;
     char buffer[1024];
 
-    // Create UDP socket
+    // Create TCP socket
     if ((client_socket = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Creating socket");
         exit(1);

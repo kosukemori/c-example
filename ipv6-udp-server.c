@@ -1,6 +1,4 @@
-/*
- Example of IPv6 UDP Server
- */
+// Example of IPv6 UDP Server
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
