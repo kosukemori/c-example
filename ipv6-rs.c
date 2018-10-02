@@ -89,13 +89,11 @@ main (int argc, char **argv)
 	printf ("Index for interface %s is %i\n", interface, ifr.ifr_ifindex);
 
 	// Source IPv6 address: you need to fill this out
-	// strcpy (source, "2001:db8::214:51ff:fe2f:1556");
-	//strcpy (source, "2001:1:1:11:eaea:6aff:fe06:2afe");
 	strcpy (source, "::");
 
 	// Destination URL or IPv6 address: you need to fill this out
-	// strcpy (target, "2001:1:1:11::2");
-	strcpy (target, "ff02::1");
+	// strcpy (target, "ff02::1");
+	strcpy (target, "ff02::2");
 
 	// Fill out hints for getaddrinfo().
 	memset (&hints, 0, sizeof (struct addrinfo));
