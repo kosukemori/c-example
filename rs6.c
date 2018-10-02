@@ -30,7 +30,7 @@
 #include <netdb.h>            // struct addrinfo
 #include <sys/ioctl.h>        // macro ioctl is defined
 #include <bits/ioctls.h>      // defines values for argument "request" of ioctl. Here, we need SIOCGIFHWADDR
-#include <bits/socket.h>      // structs msghdr and cmsghdr
+#include <sys/socket.h>      // structs msghdr and cmsghdr
 #include <net/if.h>           // struct ifreq
 
 #include <errno.h>            // errno, perror()
@@ -78,14 +78,14 @@ main (int argc, char **argv)
   psdhdr = allocate_ustrmem (IP_MAXPACKET);
 
   // Interface to send packet through.
-  strcpy (interface, "eth0");
+  strcpy (interface, "eth3");
 
   // Source (node sending solicitation) IPv6 link-local address or the IPv6 unspecified address (::).
   // You need to fill this out.
-  strcpy (source, "fe80::");
+  strcpy (source, "::");
 
   // Destination IPv6 address ("all routers" router solicitation multicast address)
-  strcpy (target, "ff02::2");
+  strcpy (target, "ff02::1");
 
   // Fill out hints for getaddrinfo().
   memset (&hints, 0, sizeof (struct addrinfo));
