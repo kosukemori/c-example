@@ -5,17 +5,16 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <unistd.h>
-
-#define SERVER_ADDRESS "127.0.0.1"
-#define SERVER_PORT 33333
+#include "config.h"
 
 int main(int argc, char **argv) {
-    int the_socket;
+    read_config();
+    int server_socket;
     struct sockaddr_in server_info;
     char buffer[1024];
 
     // Create TCP socket
-    if ((the_socket = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((server_socket = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
         perror("'socket' failed");
         exit(1);
     }
@@ -23,25 +22,25 @@ int main(int argc, char **argv) {
     // Configure server's address and ports
     memset(&server_info, 0, sizeof(server_info));
     server_info.sin_family = AF_INET;
-    server_info.sin_port = htons(SERVER_PORT);
-    server_info.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
+    server_info.sin_port = htons(config.ipv4_server_port);
+    server_info.sin_addr.s_addr = inet_addr(config.ipv4_server_address);
 
     // Begin hand-shaking
-    if (connect(the_socket, (struct sockaddr *)&server_info, sizeof(server_info)) < 0) {
+    if (connect(server_socket, (struct sockaddr *)&server_info, sizeof(server_info)) < 0) {
         perror("'connect' failed");
         exit(4);
     }
 
-    strncpy(buffer, "Hello!\0", 1024);
-    if (send(the_socket, buffer, strlen(buffer) + 1, 0) < 0) {
-        // send(the_socket, buffer, strlen(buffer) + 1, 0) は
-        // sendto(the_socket, buffer, strlen(buffer) + 1, 0, NULL, 0) と同じ
-        // write(the_socket, buffer, strlen(buffer) + 1) もほぼ同じ
+    strncpy(buffer, "Hello!\0", 6); // NULL文字を抜いて6文字
+    if (send(server_socket, buffer, sizeof(buffer), 0) < 0) {
+        // send(server_socket, buffer, sizeof(buffer), 0) は
+        // sendto(server_socket, buffer, sizeof(buffer), 0, NULL, 0) と
+        // write(server_socket, buffer, sizeof(buffer)) と同じ
         perror("'sendto' failed");
         exit(4);
     }
-    // FIXME: 本当は定期的にデータの送受信がないと切断と判断する仕様にするなど、TCPの仕組みに頼らない形で切断検知をしないといけない
+    // FIXME: 切断検知を厳密にやるには、TCPの切断検知に加えて、定期的にデータの送受信がないと切断と判断する仕様が必要
 
-    close(the_socket);
+    close(server_socket);
     return 0;
 }
