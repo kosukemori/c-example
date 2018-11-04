@@ -12,5 +12,4 @@ add_executable(c_networking_example
         ipv6-udp-server.c
         ipv6-tcp-client.c
         ipv6-tcp-server.c
-        ipv6-raw-client.c
-        )
+        config.h)
