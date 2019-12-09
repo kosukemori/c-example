@@ -1,3 +1,7 @@
+/**
+ * CPUを意図的に開放するyieldの例
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -27,5 +31,4 @@ void func_thread() {
         printf("\r");
         sched_yield();
     }
-    return;
 }
