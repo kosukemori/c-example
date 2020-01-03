@@ -1,6 +1,6 @@
 /**
  * シグナルの制御サンプル。Ctrl+CのSIGINTをハンドリングする
- * Tips: バグでCtrl+Cが効かなくなったらCtrl+\によるSIGQUITを試すと良い
+ * Tips: 何らかの手違いでCtrl+Cが効かなくなったらCtrl+\によるSIGQUITを試すと良い
  */
 
 #include <stdio.h>
