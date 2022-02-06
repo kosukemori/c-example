@@ -23,9 +23,11 @@ void funcThreadA() {
         sched_yield();
 
         // yield関数の種類について
-        // sched_yield(); // 基本的にはこれを使うのが良い
-        // pthread_yield(); // LinuxにあるがMacに存在しない。Linux実装では内部でsched_yield()を呼ぶ
-        // pthread_yield_np(); // MacにあるがLinuxに存在しない。npはNo Posixの意味
+        // - sched_yield(); // 基本的にはこれを使うのが良い
+        // - pthread_yield(); // LinuxにあるがMacに存在しない。Linux実装では内部でsched_yield()を呼ぶ
+        // - pthread_yield_np(); // MacにあるがLinuxに存在しない。npはNo Posixの意味
+        //
+        // またMacはLinuxと比べると実行されるスレッドが偏る傾向にある
     }
 }
 
