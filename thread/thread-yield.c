@@ -1,5 +1,9 @@
 /**
- * CPUを意図的に開放するyieldの例
+ * pthreadの使用例
+ * - スレッドの使い方
+ * - CPUを意図的に開放するyield
+ * - mutexの使い方
+ * - などなど
  */
 
 #include <stdio.h>
@@ -7,28 +11,51 @@
 #include <pthread.h>
 #include <sched.h>
 
-void func_thread();
+pthread_mutex_t mutex;
+int x = 0;
 
-int main() {
-    pthread_t pthread;
-    if (pthread_create(&pthread, NULL, (void *)func_thread, NULL) != 0) {
-        perror("pthread_create: ");
-    }
-    for (int i = 0; i < 10000000; i++) {
-        printf("B: %10d", i);
-        printf("\r");
-    }
+void funcThreadA() {
+    for (int i = 0; i < 10; i++) {
+        pthread_mutex_lock(&mutex);
+        x = 1;
+        pthread_mutex_unlock(&mutex);
+        printf("A: %10d\n", i);
+        sched_yield();
 
-    if (pthread_join(pthread, NULL) != 0) {
-        perror("pthread_join: ");
+        // yield関数の種類について
+        // sched_yield(); // 基本的にはこれを使うのが良い
+        // pthread_yield(); // LinuxにあるがMacに存在しない。Linux実装では内部でsched_yield()を呼ぶ
+        // pthread_yield_np(); // MacにあるがLinuxに存在しない。npはNo Posixの意味
     }
-    return 0;
 }
 
-void func_thread() {
-    for (int i = 0; i < 10000000; i++) {
-        printf("A: %10d", i);
-        printf("\r");
+void funcThreadB() {
+    for (int i = 0; i < 10; i++) {
+        pthread_mutex_lock(&mutex);
+        x = 2;
+        pthread_mutex_unlock(&mutex);
+        printf("B: %10d\n", i);
         sched_yield();
     }
+}
+
+int main() {
+    pthread_t pthreadA, pthreadB;
+    pthread_mutex_init(&mutex, NULL);
+
+    if (pthread_create(&pthreadA, NULL, (void *)funcThreadA, NULL) != 0) {
+        perror("pthread_create A: ");
+    }
+    if (pthread_create(&pthreadB, NULL, (void *)funcThreadB, NULL) != 0) {
+        perror("pthread_create B: ");
+    }
+
+    if (pthread_join(pthreadA, NULL) != 0) {
+        perror("pthread_join: ");
+    }
+    if (pthread_join(pthreadB, NULL) != 0) {
+        perror("pthread_join: ");
+    }
+    pthread_mutex_destroy(&mutex);
+    return 0;
 }
