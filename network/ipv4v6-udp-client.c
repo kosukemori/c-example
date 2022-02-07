@@ -1,4 +1,8 @@
-// Example of IPv4/IPv6 UDP Client
+/**
+ * Example of IPv4/IPv6 UDP Client
+ * getaddrinfo()を使うことでv4/v6両対応
+ * 同じくgetaddrinfo()によってv6の「リンクローカルアドレス+インターフェイス名」 (例: fe80::XXXX:XXXX:XXXX:XXXX%eth0) も対応
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
