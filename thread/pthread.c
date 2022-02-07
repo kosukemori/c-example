@@ -11,6 +11,12 @@
 #include <pthread.h>
 #include <sched.h>
 
+// mutexについて
+// 初期化はpthread_mutex_init()かPTHREAD_MUTEX_INITIALIZERで行う
+// 破棄はpthread_mutex_destroy()で行う
+// 変数への書き込みにはロックが必須
+// 一般的な変数の読み込みはアトミック操作なのでロックは必須ではないが、複雑なデータ構造だとそうでない可能性があるので注意
+// (int型等なら特に問題はないはず。これが配列になると怪しい)
 pthread_mutex_t mutex;
 int x = 0;
 
