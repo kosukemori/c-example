@@ -17,5 +17,6 @@ add_executable(c_example
         network/ipv6-tcp-server.c
         network/ipv6-udp-client.c
         network/ipv6-udp-server.c
+        network/ipv4v6-udp-client.c
         padding/struct-padding.c
-        thread/thread-yield.c time/measure-time.c)
+        thread/pthread.c time/measure-time.c)
